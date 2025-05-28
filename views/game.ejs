@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Word Challenge Game</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <h1>Word Challenge Game</h1>
+  
+  <% if (gameState.gameOver) { %>
+    <div class="result">
+      <h2><%= gameState.winner === 'human' ? 'You Win!' : 'Computer Wins!' %></h2>
+      <p>The letters were: <%= gameState.letters.join(', ') %></p>
+      <a href="/game">Play Again</a>
+    </div>
+  <% } else { %>
+    <div class="game-area">
+      <h2>Current Letters: <%= gameState.letters.join(', ') %></h2>
+      <p>Current Turn: <%= gameState.currentPlayer === 'human' ? 'Your Turn' : 'Computer Thinking...' %></p>
+      
+      <% if (gameState.waitingForWord) { %>
+        <form action="/submit-word" method="POST">
+          <p>Computer rejected! Enter a word using these letters:</p>
+          <input type="text" name="word" required>
+          <button type="submit">Submit Word</button>
+        </form>
+      <% } else if (gameState.currentPlayer === 'human') { %>
+        <div class="options">
+          <form action="/move" method="POST">
+            <h3>Your Options:</h3>
+            <div>
+              <label>Add a letter:</label>
+              <input type="text" name="letter" maxlength="1" pattern="[A-Za-z]" required>
+              <input type="hidden" name="action" value="add">
+              <button type="submit">Add Letter</button>
+            </div>
+          </form>
+          
+          <form action="/move" method="POST">
+            <input type="hidden" name="action" value="reject">
+            <button type="submit">Reject (Challenge)</button>
+          </form>
+        </div>
+      <% } else { %>
+        <p>Computer is making its move...</p>
+        <meta http-equiv="refresh" content="2;url=/game">
+      <% } %>
+    </div>
+  <% } %>
+</body>
+</html>
